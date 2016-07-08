@@ -21,10 +21,13 @@ int 21h
     int     10h    
            
      
-; Backspace <-
+;Backspace <-
     cmp     al, 08h
     jz      back
     
+;Abrir Ctrl + o 
+    cmp     al, 0fh
+    jz      open 
 
 ;Guardar Ctrl + G   ( 07h)
     cmp     al, 07h
@@ -33,7 +36,6 @@ int 21h
 ;Memoria
     mov     offset reserva+bx,al
     inc     bx
-
 
 ;"Esc"
     cmp     al, 1bh
@@ -48,6 +50,31 @@ int 21h
 
 ;FUNCIONES
 
+;abrir
+    open:
+        mov si,bx ; Para no perder el contador
+        
+    	mov al, 2   ;Lectura y Escritura
+    	mov dx, offset file1
+    	mov ah, 3dh
+    	int 21h
+    	mov handle, ax
+    	
+    	; Read file:
+        mov ah, 3fh
+        mov bx, handle
+        mov dx, offset reserva
+        mov cx, 100
+        int 21h
+        
+        ; Imprimimos
+        mov dx, offset reserva
+        mov ah, 9
+        int 21h
+        
+        mov bx,si ;Recuperamos el contador  
+    	
+        
 
 ;retroceso<-
     back:
@@ -72,7 +99,9 @@ int 21h
 
 ;Guardar
     guardar:
-        mov al, 2
+        mov si,bx ; Para no perder el contador
+        
+        mov al, 2   ;Lectura y Escritura
     	mov dx, offset file1
     	mov ah, 3dh
     	int 21h
@@ -90,7 +119,9 @@ int 21h
         mov ah, 3eh
         mov bx, handle
         int 21h
-        jmp espera_tecla
+        jmp espera_tecla 
+        
+        mov bx,si ;Recuperamos el contador
 	 
 
 
@@ -113,5 +144,5 @@ msg  db "Escribe un texto (Max 100):", 0Dh,0Ah
      db "[Esc] - Salir.", 0Dh,0Ah, "$"
   
 reserva db "                                                  "
-        db "                                                  "
+        db "                                                 $"
 end
