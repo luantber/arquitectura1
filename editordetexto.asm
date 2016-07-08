@@ -15,7 +15,12 @@ int 21h
         
     mov     ah, 0
     int     16h
-
+    
+;Abrir Ctrl + o 
+    cmp     al, 0fh
+    jz      open 
+    
+    
 ;Impresion
     mov     ah, 0eh
     int     10h    
@@ -25,10 +30,6 @@ int 21h
     cmp     al, 08h
     jz      back
     
-;Abrir Ctrl + o 
-    cmp     al, 0fh
-    jz      open 
-
 ;Guardar Ctrl + G   ( 07h)
     cmp     al, 07h
     jz      guardar
@@ -140,6 +141,7 @@ handle dw ?
 msg  db "Escribe un texto (Max 100):", 0Dh,0Ah
      db "[Enter] - Retorna al inicio.", 0Dh,0Ah
      db "[Ctrl]+[Enter] - Salto de Linea", 0Dh,0Ah
+     db "[Ctrl]+[O] - Abrir Archivo", 0Dh,0Ah
      db "[Ctrl]+[G] - Guardar Archivo", 0Dh,0Ah
      db "[Esc] - Salir.", 0Dh,0Ah, "$"
   
